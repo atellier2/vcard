@@ -1,0 +1,19 @@
+{
+    "name": "build",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "node scripts/build.js",
+        "test": "npm run build && node tests/test.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "jsdom": "^31.0.0",
+        "jsqr": "^1.4.0",
+        "pngjs": "^7.0.0",
+        "qrcode-generator": "^2.0.4"
+    }
+}

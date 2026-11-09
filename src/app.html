@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carte de contact</title>
+<meta name="description" content="Carte de contact numérique : enregistrez les coordonnées en un geste.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0f6b5e">
+<!-- Aucune requête réseau n'est autorisée : les données ne peuvent pas sortir de la page. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f6b5e'/%3E%3Ccircle cx='16' cy='12.5' r='4.5' fill='%23fff'/%3E%3Cpath d='M7.5 25c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f4f3ee;--surface:#fff;--ink:#17201e;--muted:#5d6a66;--line:#e2e0d6;
+  --accent:#0f6b5e;--accent-ink:#fff;--tint:#e3f0ec;--warn:#9a3412;--warnbg:#fff1e6;
+  --shadow:0 1px 2px rgba(23,32,30,.06),0 8px 24px rgba(23,32,30,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1312;--surface:#171d1b;--ink:#eef2f0;--muted:#9aa9a4;--line:#27302d;
+    --accent:#4fd1b8;--accent-ink:#06211c;--tint:#1d2a26;--warn:#fdba74;--warnbg:#2a1d12;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif}
+main{max-width:460px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:1.6rem;line-height:1.2;margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:24px 20px;margin:0 0 16px}
+.id{text-align:center}
+.avatar{width:76px;height:76px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:1.7rem;font-weight:650;margin:0 auto 12px;letter-spacing:.02em}
+.role{margin:6px 0 0;color:var(--muted)}
+.rows{list-style:none;padding:0;margin:20px 0 4px;display:grid;gap:4px;text-align:left}
+.rows li{display:flex;gap:12px;align-items:flex-start}
+.ico{flex:none;width:38px;height:38px;border-radius:11px;background:var(--tint);color:var(--accent);display:grid;place-items:center;margin-top:2px}
+.ico svg{width:20px;height:20px}
+.rowbody{flex:1;min-width:0;display:flex;flex-direction:column;padding:6px 4px;color:inherit;text-decoration:none;border-radius:10px;overflow-wrap:anywhere}
+a.rowbody:hover span,a.rowbody:focus-visible span{text-decoration:underline}
+.rowbody small{color:var(--muted);font-size:.78rem;line-height:1.2;text-transform:uppercase;letter-spacing:.05em}
+.rowbody span{font-weight:550;white-space:pre-line}
+.btn,button{font:inherit}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:10px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;cursor:pointer;text-decoration:none;margin-top:10px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);margin-top:20px}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn[disabled],.btn[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+.btnrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.btnrow .btn{margin-top:10px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.qr{width:min(100%,300px);margin:0 auto}
+.qr svg{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.qr.small{width:min(100%,220px);margin-top:16px}
+.hint{color:var(--muted);font-size:.9rem;margin:10px 0 0;text-align:center}
+.urlbox{display:flex;gap:8px;margin-top:16px}
+.urlbox input{flex:1;min-width:0}
+.urlbox .btn{width:auto;margin:0;min-height:44px;flex:none}
+.foot{color:var(--muted);font-size:.85rem;text-align:center;margin:20px 8px 0}
+.link{background:none;border:0;padding:4px;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:.95rem}
+label{display:block;font-size:.85rem;font-weight:600;margin:0 0 4px}
+input,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;min-height:44px}
+input:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--tint)}
+textarea{resize:vertical}
+.grid{display:grid;gap:12px;margin-bottom:12px}
+.grid.two{grid-template-columns:1fr 1fr}
+.grid.postal{grid-template-columns:1fr 2fr}
+.lead{color:var(--muted);margin:8px 0 20px}
+.warn{background:var(--warnbg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:.9rem;margin:10px 0 0}
+.stat{color:var(--muted);font-size:.85rem;margin:8px 0 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media print{
+  body{background:#fff}.btn,button,.foot,.urlbox{display:none!important}
+  #c-share{display:block!important}.card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ============ Vue « carte » ============ -->
+<section id="view-card" hidden>
+  <article class="card id">
+    <div class="avatar" id="c-avatar" aria-hidden="true"></div>
+    <h1 id="c-name"></h1>
+    <p class="role" id="c-role"></p>
+    <ul class="rows" id="c-rows"></ul>
+    <button type="button" class="btn primary" id="c-save">Enregistrer dans mes contacts</button>
+    <button type="button" class="btn" id="c-qr-toggle" aria-expanded="false" aria-controls="c-share">Afficher le QR code</button>
+  </article>
+
+  <section class="card" id="c-share" aria-label="Partager cette carte" hidden>
+    <div class="qr" id="c-qr"></div>
+    <p class="hint">Scannez ce code pour ouvrir cette carte.</p>
+    <div class="urlbox">
+      <input type="text" id="c-url" readonly aria-label="Lien de la carte">
+      <button type="button" class="btn" id="c-copy">Copier</button>
+    </div>
+    <div class="btnrow">
+      <a class="btn" id="c-sms" href="#">Par SMS</a>
+      <a class="btn" id="c-mail" href="#">Par e-mail</a>
+      <button type="button" class="btn" id="c-native" hidden>Partager…</button>
+    </div>
+    <div class="btnrow">
+      <button type="button" class="btn" id="c-dl-svg">QR code (SVG)</button>
+      <button type="button" class="btn" id="c-dl-png">QR code (PNG)</button>
+    </div>
+  </section>
+
+  <p class="foot">Les coordonnées sont contenues dans l’adresse de cette page. Elles ne sont enregistrées sur aucun serveur.<br>
+    <button type="button" class="link" id="c-edit">Modifier cette carte</button></p>
+</section>
+
+<!-- ============ Vue « création » ============ -->
+<section id="view-edit" hidden>
+  <h1>Créer ma carte de contact</h1>
+  <p class="lead">Renseignez vos coordonnées : le lien généré les contient toutes. Rien n’est envoyé ni enregistré ailleurs que dans ce lien.</p>
+
+  <form class="card" id="e-form" novalidate></form>
+
+  <section class="card" aria-label="Lien généré">
+    <label for="e-url">Votre lien</label>
+    <textarea id="e-url" rows="4" readonly></textarea>
+    <p class="stat" id="e-stat" aria-live="polite"></p>
+    <div id="e-warns" aria-live="polite"></div>
+    <div class="btnrow">
+      <button type="button" class="btn" id="e-copy">Copier le lien</button>
+      <button type="button" class="btn primary" id="e-open" style="margin-top:10px">Ouvrir la carte</button>
+    </div>
+    <div class="qr small" id="e-qr"></div>
+    <p class="hint" id="e-back-wrap" hidden><button type="button" class="link" id="e-back">Revenir à la carte sans enregistrer les changements</button></p>
+  </section>
+</section>
+
+</main>
+
+<script>
+/*__QRLIB__*/
+</script>
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------
+   *  Carte de contact sans serveur.
+   *  Toutes les données vivent dans le fragment de l'URL (après le « # »),
+   *  que le navigateur n'envoie jamais au serveur.
+   * ------------------------------------------------------------------ */
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // k = clé courte dans l'URL, f = nom du champ
+  var FIELDS = [
+    { k: 'f', f: 'first',   label: 'Prénom',         max: 80,  ac: 'given-name' },
+    { k: 'l', f: 'last',    label: 'Nom',            max: 80,  ac: 'family-name' },
+    { k: 'o', f: 'org',     label: 'Société',        max: 80,  ac: 'organization' },
+    { k: 't', f: 'title',   label: 'Fonction',       max: 80,  ac: 'organization-title' },
+    { k: 'p', f: 'mobile',  label: 'Mobile',         max: 30,  ac: 'tel', type: 'tel', ph: '06 12 34 56 78' },
+    { k: 'q', f: 'phone',   label: 'Téléphone fixe', max: 30,  ac: 'tel', type: 'tel' },
+    { k: 'e', f: 'email',   label: 'E-mail',         max: 120, ac: 'email', type: 'email' },
+    { k: 'w', f: 'web',     label: 'Site web',       max: 200, ac: 'url', type: 'text', mode: 'url', ph: 'exemple.fr' },
+    { k: 'r', f: 'street',  label: 'Adresse',        max: 120, ac: 'street-address' },
+    { k: 'z', f: 'postal',  label: 'Code postal',    max: 12,  ac: 'postal-code' },
+    { k: 'c', f: 'city',    label: 'Ville',          max: 60,  ac: 'address-level2' },
+    { k: 'y', f: 'country', label: 'Pays',           max: 60,  ac: 'country-name' },
+    { k: 'n', f: 'note',    label: 'Note',           max: 300, multi: true }
+  ];
+  var LAYOUT = [['first', 'last'], ['org', 'title'], ['mobile', 'phone'], ['email'], ['web'],
+                ['street'], ['postal', 'city'], ['country'], ['note']];
+
+  /* ---------- nettoyage / validation ---------- */
+
+  function cut(s, n) { var a = Array.from(s); return a.length > n ? a.slice(0, n).join('') : s; }
+
+  function clean(v, max, multi) {
+    v = String(v == null ? '' : v).replace(/\r\n?/g, '\n').replace(/[\u2028\u2029]/g, '\n');
+    if (multi) {
+      v = v.replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, '').replace(/[ \t]+\n/g, '\n').trim();
+    } else {
+      v = v.replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    return cut(v, max);
+  }
+
+  var EMAIL_RE = /^[^\s@<>()\[\]\\,;:"]+@[^\s@<>()\[\]\\,;:"]+\.[^\s@<>()\[\]\\,;:"]+$/;
+
+  function normalizeWeb(s) {
+    if (!s) return '';
+    s = s.replace(/\s+/g, '');
+    if (!/^[a-z][a-z0-9+.\-]*:\/\//i.test(s)) {
+      if (/^(javascript|data|vbscript|file|blob|about|mailto|tel|sms):/i.test(s)) return '';
+      s = 'https://' + s;
+    }
+    try {
+      var u = new URL(s);
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') return '';
+      if (!u.hostname) return '';
+      return u.href;
+    } catch (e) { return ''; }
+  }
+
+  // Copie validée : e-mail et site invalides sont écartés.
+  function normalize(d) {
+    var n = {};
+    FIELDS.forEach(function (x) { n[x.f] = d[x.f] ? clean(d[x.f], x.max, x.multi) : ''; });
+    if (n.email && !EMAIL_RE.test(n.email)) n.email = '';
+    n.web = normalizeWeb(n.web);
+    return n;
+  }
+
+  function fullName(n) { return [n.first, n.last].filter(Boolean).join(' '); }
+
+  function initials(n) {
+    var s = [n.first, n.last].filter(Boolean).map(function (w) { return Array.from(w)[0]; }).join('');
+    return Array.from(s).slice(0, 2).join('').toUpperCase() || '?';
+  }
+
+  function telDigits(v) {
+    var plus = v.trim().charAt(0) === '+' ? '+' : '';
+    return plus + v.replace(/\D/g, '');
+  }
+
+  function slug(s) {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  /* ---------- URL <-> données ---------- */
+
+  function toHash(d) {
+    return FIELDS.filter(function (x) { return d[x.f]; })
+      .map(function (x) { return x.k + '=' + encodeURIComponent(d[x.f]); }).join('&');
+  }
+
+  function parseHash(h) {
+    var d = {};
+    String(h || '').replace(/^#/, '').split('&').forEach(function (part) {
+      var i = part.indexOf('=');
+      if (i < 1) return;
+      var def = FIELDS.filter(function (x) { return x.k === part.slice(0, i); })[0];
+      if (!def) return;
+      var v;
+      try { v = decodeURIComponent(part.slice(i + 1)); } catch (e) { return; }
+      d[def.f] = clean(v, def.max, def.multi);
+    });
+    return d;
+  }
+
+  // L'URL partagée et le QR code ne doivent contenir que de l'ASCII.
+  function asciiUrl(s) {
+    return Array.from(s).map(function (ch) {
+      if (/[\x21-\x7E]/.test(ch)) return ch;
+      try { return encodeURIComponent(ch); } catch (e) { return '%EF%BF%BD'; }
+    }).join('');
+  }
+
+  /* ---------- vCard 3.0 ---------- */
+
+  function vesc(s) {
+    return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
+  }
+
+  function u8len(cp) { return cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4; }
+
+  // Pliage des lignes à 75 octets (RFC 6350 / 2425), sans couper un caractère.
+  function fold(line) {
+    var out = [], cur = '', len = 0;
+    Array.from(line).forEach(function (ch) {
+      var b = u8len(ch.codePointAt(0));
+      if (len + b > 73) { out.push(cur); cur = ' '; len = 1; }
+      cur += ch; len += b;
+    });
+    out.push(cur);
+    return out.join('\r\n');
+  }
+
+  function vcard(d) {
+    var n = normalize(d);
+    var L = ['BEGIN:VCARD', 'VERSION:3.0',
+             'N:' + vesc(n.last) + ';' + vesc(n.first) + ';;;',
+             'FN:' + vesc(fullName(n))];
+    if (n.org) L.push('ORG:' + vesc(n.org));
+    if (n.title) L.push('TITLE:' + vesc(n.title));
+    if (n.mobile) L.push('TEL;TYPE=CELL:' + n.mobile);
+    if (n.phone) L.push('TEL;TYPE=WORK,VOICE:' + n.phone);
+    if (n.email) L.push('EMAIL;TYPE=INTERNET:' + n.email);
+    if (n.web) L.push('URL:' + n.web);
+    if (n.street || n.postal || n.city || n.country) {
+      L.push('ADR;TYPE=WORK:;;' + [n.street, n.city, '', n.postal, n.country].map(vesc).join(';'));
+    }
+    if (n.note) L.push('NOTE:' + vesc(n.note));
+    L.push('END:VCARD');
+    return L.map(fold).join('\r\n') + '\r\n';
+  }
+
+  function baseName(n) { return slug(fullName(n)) || 'contact'; }
+
+  /* ---------- QR code ---------- */
+
+  function qrMake(text) {
+    var levels = ['M', 'L'];
+    for (var i = 0; i < levels.length; i++) {
+      try {
+        var q = qrcode(0, levels[i]);
+        q.addData(text, 'Byte');
+        q.make();
+        return q;
+      } catch (e) { /* trop long pour ce niveau : on essaie le suivant */ }
+    }
+    return null;
+  }
+
+  var QUIET = 4;
+
+  function qrSvg(text) {
+    var q = qrMake(text);
+    if (!q) return null;
+    var n = q.getModuleCount(), d = '';
+    for (var r = 0; r < n; r++) {
+      var c = 0;
+      while (c < n) {
+        if (q.isDark(r, c)) {
+          var s = c;
+          while (c < n && q.isDark(r, c)) c++;
+          d += 'M' + (s + QUIET) + ' ' + (r + QUIET) + 'h' + (c - s) + 'v1h-' + (c - s) + 'z';
+        } else { c++; }
+      }
+    }
+    var size = n + 2 * QUIET;
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size +
+      '" shape-rendering="crispEdges" role="img" aria-label="QR code de la carte">' +
+      '<rect width="' + size + '" height="' + size + '" fill="#fff"/>' +
+      '<path d="' + d + '" fill="#000"/></svg>';
+  }
+
+  function qrPng(text, cb) {
+    var q = qrMake(text);
+    if (!q) return cb(null);
+    var n = q.getModuleCount(), scale = 10, size = (n + 2 * QUIET) * scale;
+    var cv = document.createElement('canvas');
+    cv.width = cv.height = size;
+    var x = cv.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, size, size);
+    x.fillStyle = '#000';
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) {
+      if (q.isDark(r, c)) x.fillRect((c + QUIET) * scale, (r + QUIET) * scale, scale, scale);
+    }
+    cv.toBlob(cb, 'image/png');
+  }
+
+  /* ---------- utilitaires d'interface ---------- */
+
+  function download(name, mime, data) {
+    var blob = new Blob([data], { type: mime });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+  }
+
+  function flash(btn, text) {
+    var old = btn.getAttribute('data-label') || btn.textContent;
+    btn.setAttribute('data-label', old);
+    btn.textContent = text;
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.textContent = old; }, 1600);
+  }
+
+  function copy(text, btn, input) {
+    function fallback() {
+      var el = input || document.createElement('textarea');
+      if (!input) { el.value = text; document.body.appendChild(el); }
+      el.select();
+      try { document.execCommand('copy'); flash(btn, 'Copié ✓'); } catch (e) { flash(btn, 'Copie impossible'); }
+      if (!input) el.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { flash(btn, 'Copié ✓'); }, fallback);
+    } else { fallback(); }
+  }
+
+  var ICONS = {
+    phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+    web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    pin: '<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    note: '<path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h8M8 17h5"/>'
+  };
+
+  // Les valeurs saisies passent toujours par textContent, jamais par innerHTML.
+  function row(icon, label, text, href) {
+    var li = document.createElement('li');
+    var ic = document.createElement('span');
+    ic.className = 'ico';
+    ic.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICONS[icon] + '</svg>';
+    var body = document.createElement(href ? 'a' : 'div');
+    body.className = 'rowbody';
+    if (href) {
+      body.href = href;
+      if (/^https?:/i.test(href)) { body.target = '_blank'; body.rel = 'noopener noreferrer'; }
+    }
+    var l = document.createElement('small'); l.textContent = label;
+    var v = document.createElement('span'); v.textContent = text;
+    body.appendChild(l); body.appendChild(v);
+    li.appendChild(ic); li.appendChild(body);
+    return li;
+  }
+
+  function showQr(box, url, failMsg) {
+    var svg = qrSvg(url);
+    box.textContent = '';
+    if (svg) box.innerHTML = svg;
+    else if (failMsg) warn(box, failMsg);
+    return !!svg;
+  }
+
+  /* ---------- vue carte ---------- */
+
+  var cardData = {};
+
+  function currentUrl() { return asciiUrl(location.href); }
+
+  function renderCard(d) {
+    var n = normalize(d);
+    cardData = n;
+    var name = fullName(n);
+    document.title = name + ' — carte de contact';
+    $('c-name').textContent = name;
+    $('c-avatar').textContent = initials(n);
+    var role = [n.title, n.org].filter(Boolean).join(' · ');
+    $('c-role').textContent = role;
+    $('c-role').hidden = !role;
+
+    var rows = $('c-rows');
+    rows.textContent = '';
+    if (n.mobile) rows.appendChild(row('phone', 'Mobile', n.mobile, telDigits(n.mobile) ? 'tel:' + telDigits(n.mobile) : ''));
+    if (n.phone) rows.appendChild(row('phone', 'Téléphone', n.phone, telDigits(n.phone) ? 'tel:' + telDigits(n.phone) : ''));
+    if (n.email) rows.appendChild(row('mail', 'E-mail', n.email, 'mailto:' + n.email));
+    if (n.web) rows.appendChild(row('web', 'Site web', n.web.replace(/^https?:\/\//, '').replace(/\/$/, ''), n.web));
+    var addr = [n.street, [n.postal, n.city].filter(Boolean).join(' '), n.country].filter(Boolean).join('\n');
+    if (addr) rows.appendChild(row('pin', 'Adresse', addr, ''));
+    if (n.note) rows.appendChild(row('note', 'Note', n.note, ''));
+
+    var url = currentUrl();
+    $('c-url').value = url;
+    var msg = 'Voici ma carte de contact :\n' + url;
+    $('c-sms').href = 'sms:?&body=' + encodeURIComponent(msg);
+    $('c-mail').href = 'mailto:?subject=' + encodeURIComponent('Carte de contact — ' + name) +
+      '&body=' + encodeURIComponent(msg);
+
+    // Le panneau QR reste fermé à l'ouverture ; il se régénère à chaque affichage.
+    $('c-share').hidden = true;
+    $('c-qr-toggle').setAttribute('aria-expanded', 'false');
+    $('c-qr-toggle').textContent = 'Afficher le QR code';
+    $('c-qr').textContent = '';
+  }
+
+  /* ---------- vue création ---------- */
+
+  var inputs = {};
+
+  function buildForm() {
+    var form = $('e-form');
+    var byField = {};
+    FIELDS.forEach(function (x) { byField[x.f] = x; });
+    LAYOUT.forEach(function (group) {
+      var g = document.createElement('div');
+      g.className = 'grid' + (group.length === 2 ? (group[0] === 'postal' ? ' postal' : ' two') : '');
+      group.forEach(function (f) {
+        var x = byField[f];
+        var cell = document.createElement('div');
+        var lab = document.createElement('label');
+        lab.htmlFor = 'i-' + f;
+        lab.textContent = x.label;
+        var el = document.createElement(x.multi ? 'textarea' : 'input');
+        el.id = 'i-' + f;
+        el.name = f;
+        el.maxLength = x.max;
+        if (x.multi) el.rows = 3; else el.type = x.type || 'text';
+        if (x.ac) el.setAttribute('autocomplete', x.ac);
+        if (x.mode) el.setAttribute('inputmode', x.mode);
+        if (x.ph) el.placeholder = x.ph;
+        inputs[f] = el;
+        cell.appendChild(lab); cell.appendChild(el);
+        g.appendChild(cell);
+      });
+      form.appendChild(g);
+    });
+    form.addEventListener('input', updateEditor);
+    form.addEventListener('submit', function (e) { e.preventDefault(); });
+  }
+
+  function readForm() {
+    var d = {};
+    FIELDS.forEach(function (x) { d[x.f] = inputs[x.f].value; });
+    return d;
+  }
+
+  function fillForm(d) {
+    FIELDS.forEach(function (x) { inputs[x.f].value = d[x.f] || ''; });
+  }
+
+  var lastHash = '';
+
+  function warn(box, text) {
+    var p = document.createElement('p');
+    p.className = 'warn';
+    p.textContent = text;
+    box.appendChild(p);
+  }
+
+  function updateEditor() {
+    var raw = readForm();
+    var clean_ = {};
+    FIELDS.forEach(function (x) { clean_[x.f] = clean(raw[x.f], x.max, x.multi); });
+    var n = normalize(raw);
+    var hasName = !!fullName(n);
+    var hash = toHash(n);
+    lastHash = hash;
+    var base = location.href.split('#')[0];
+    var url = asciiUrl(hash ? base + '#' + hash : base);
+    $('e-url').value = url;
+
+    var warns = $('e-warns');
+    warns.textContent = '';
+    if (location.protocol === 'file:') {
+      warn(warns, 'Cette page est ouverte depuis un fichier local : le lien ne fonctionnera pas pour les autres. Hébergez-la en HTTPS, ouvrez-la à son adresse publique, puis créez votre lien.');
+    }
+    if (clean_.email && !n.email) warn(warns, 'L’adresse e-mail semble invalide : elle sera ignorée.');
+    if (clean_.web && !n.web) warn(warns, 'Le site web doit être une adresse http ou https : il sera ignoré.');
+    if (!hasName) warn(warns, 'Renseignez au moins un prénom ou un nom.');
+
+    var ok = hasName && showQr($('e-qr'), url);
+    if (!hasName) $('e-qr').textContent = '';
+    if (hasName && !ok) warn(warns, 'Trop de données pour un QR code : raccourcissez la note ou retirez des champs.');
+
+    var stat = '';
+    if (hasName) {
+      stat = url.length + ' caractères';
+      if (ok) {
+        var q = qrMake(url), version = (q.getModuleCount() - 17) / 4;
+        if (version > 12) warn(warns, 'QR code très dense (version ' + version + ') : il sera difficile à scanner. Allégez la fiche si possible.');
+      }
+      if (url.length > 1500) warn(warns, 'Lien très long : certaines messageries risquent de le tronquer.');
+    }
+    $('e-stat').textContent = stat;
+    $('e-open').disabled = !hasName;
+    $('e-open').setAttribute('aria-disabled', String(!hasName));
+  }
+
+  /* ---------- routage ---------- */
+
+  var editing = false, lastView = '';
+
+  function route() {
+    var d = parseHash(location.hash);
+    var valid = !!fullName(normalize(d));
+    var view = (!editing && valid) ? 'card' : 'edit';
+    $('view-card').hidden = view !== 'card';
+    $('view-edit').hidden = view !== 'edit';
+    if (view === 'card') {
+      renderCard(d);
+    } else {
+      document.title = 'Créer ma carte de contact';
+      if (lastView !== 'edit') fillForm(d);
+      $('e-back-wrap').hidden = !valid;
+      updateEditor();
+    }
+    lastView = view;
+  }
+
+  /* ---------- événements ---------- */
+
+  buildForm();
+
+  $('c-save').addEventListener('click', function () {
+    download(baseName(cardData) + '.vcf', 'text/vcard;charset=utf-8', vcard(cardData));
+  });
+
+  $('c-qr-toggle').addEventListener('click', function () {
+    var panel = $('c-share'), open = panel.hidden;
+    panel.hidden = !open;
+    this.setAttribute('aria-expanded', String(open));
+    this.textContent = open ? 'Masquer le QR code' : 'Afficher le QR code';
+    if (open) {
+      showQr($('c-qr'), currentUrl(), 'QR code indisponible : le lien est trop long. Utilisez le lien ci-dessous.');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+
+  $('c-copy').addEventListener('click', function () { copy($('c-url').value, this, $('c-url')); });
+  $('c-url').addEventListener('focus', function () { this.select(); });
+
+  if (navigator.share) {
+    $('c-native').hidden = false;
+    $('c-native').addEventListener('click', function () {
+      navigator.share({ title: 'Carte de contact — ' + fullName(cardData), text: 'Ma carte de contact', url: currentUrl() })
+        .catch(function () { /* partage annulé */ });
+    });
+  }
+
+  $('c-dl-svg').addEventListener('click', function () {
+    var svg = qrSvg(currentUrl());
+    if (svg) download('qr-' + baseName(cardData) + '.svg', 'image/svg+xml', svg);
+  });
+  $('c-dl-png').addEventListener('click', function () {
+    var btn = this;
+    qrPng(currentUrl(), function (blob) {
+      if (!blob) return flash(btn, 'Échec');
+      download('qr-' + baseName(cardData) + '.png', 'image/png', blob);
+    });
+  });
+
+  $('c-edit').addEventListener('click', function () { editing = true; route(); window.scrollTo(0, 0); });
+
+  $('e-copy').addEventListener('click', function () { copy($('e-url').value, this, $('e-url')); });
+  $('e-open').addEventListener('click', function () {
+    if (this.disabled) return;
+    editing = false;
+    if (location.hash.slice(1) === lastHash) { route(); } else { location.hash = lastHash; }
+    window.scrollTo(0, 0);
+  });
+  $('e-back').addEventListener('click', function () { editing = false; route(); window.scrollTo(0, 0); });
+
+  window.addEventListener('hashchange', function () { editing = false; route(); });
+
+  route();
+
+  // Exposé pour les tests automatisés uniquement.
+  window.__contactCard = { parseHash: parseHash, toHash: toHash, normalize: normalize, vcard: vcard,
+                           qrSvg: qrSvg, asciiUrl: asciiUrl, fold: fold };
+})();
+</script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+➡️ https://atellier2.github.io/vcard
+
 # Carte de contact
 
 Page web unique qui génère une carte de contact numérique : on saisit ses coordonnées, on obtient un lien (et un QR code) qui ouvre la carte, avec un bouton « Enregistrer dans mes contacts » (fichier vCard `.vcf`).

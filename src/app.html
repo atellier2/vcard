@@ -364,6 +364,20 @@ textarea{resize:vertical}
     setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
   }
 
+  // iOS : un lien « download » envoie le .vcf dans l'app Fichiers. Safari n'ouvre la
+  // fiche « Nouveau contact » que s'il navigue vers un contenu text/vcard.
+  function isIOS() {
+    return /iP(hone|ad|od)/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function saveVcard(name, text) {
+    if (!isIOS()) return download(name, 'text/vcard;charset=utf-8', text);
+    var url = URL.createObjectURL(new Blob([text], { type: 'text/vcard;charset=utf-8' }));
+    location.href = url;
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+
   function flash(btn, text) {
     var old = btn.getAttribute('data-label') || btn.textContent;
     btn.setAttribute('data-label', old);
@@ -581,7 +595,7 @@ textarea{resize:vertical}
   buildForm();
 
   $('c-save').addEventListener('click', function () {
-    download(baseName(cardData) + '.vcf', 'text/vcard;charset=utf-8', vcard(cardData));
+    saveVcard(baseName(cardData) + '.vcf', vcard(cardData));
   });
 
   $('c-qr-toggle').addEventListener('click', function () {

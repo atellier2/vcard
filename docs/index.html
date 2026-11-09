@@ -100,6 +100,7 @@ textarea{resize:vertical}
     <p class="role" id="c-role"></p>
     <ul class="rows" id="c-rows"></ul>
     <button type="button" class="btn primary" id="c-save">Enregistrer dans mes contacts</button>
+    <p class="warn" id="c-ios-hint" hidden>Ce navigateur n’ouvre pas toujours la fiche de contact sur iPhone. Si rien ne se crée, ouvrez cette page dans Safari.</p>
     <button type="button" class="btn" id="c-qr-toggle" aria-expanded="false" aria-controls="c-share">Afficher le QR code</button>
   </article>
 
@@ -2679,8 +2680,25 @@ var qrcode = function() {
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   }
 
+  // Firefox, Chrome, Edge… sur iOS : moteur WebKit, mais sans l'ouverture directe du .vcf.
+  function isIOSOtherBrowser() {
+    return isIOS() && /(FxiOS|CriOS|EdgiOS|OPiOS|OPT\/|DuckDuckGo|GSA\/)/.test(navigator.userAgent);
+  }
+
   function saveVcard(name, text) {
     if (!isIOS()) return download(name, 'text/vcard;charset=utf-8', text);
+    if (isIOSOtherBrowser()) {
+      // Feuille de partage iOS avec le fichier ; à défaut, simple téléchargement.
+      var file;
+      try { file = new File([text], name, { type: 'text/vcard' }); } catch (e) { file = null; }
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file] }).catch(function (err) {
+          if (!err || err.name !== 'AbortError') download(name, 'text/vcard;charset=utf-8', text);
+        });
+        return;
+      }
+      return download(name, 'text/vcard;charset=utf-8', text);
+    }
     var url = URL.createObjectURL(new Blob([text], { type: 'text/vcard;charset=utf-8' }));
     location.href = url;
     setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
@@ -2901,6 +2919,8 @@ var qrcode = function() {
   /* ---------- événements ---------- */
 
   buildForm();
+
+  $('c-ios-hint').hidden = !isIOSOtherBrowser();
 
   $('c-save').addEventListener('click', function () {
     saveVcard(baseName(cardData) + '.vcf', vcard(cardData));
